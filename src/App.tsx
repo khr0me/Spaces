@@ -5,8 +5,8 @@ import { createClient } from "@supabase/supabase-js";
 import CreateRoomForm from "./components/CreateRoomForm";
 
 const supabase = createClient(
-  "https://bwlwdaajalymovfjpavs.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3bHdkYWFqYWx5bW92ZmpwYXZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM0OTE1OTYsImV4cCI6MjA1OTA2NzU5Nn0.JbVvC30kvXUrmXtndQxKfWjm1lh6d8ypBJsM6yeZOMs"
+  import.meta.env.VITE_SUPABASE_URL!,
+  import.meta.env.VITE_SUPABASE_ANON_KEY!
 );
 
 function App() {
@@ -79,7 +79,7 @@ function RoomList({ refreshFlag }: { refreshFlag: boolean }) {
   const [rooms, setRooms] = useState<{ id: number; name: string }[]>([]);
 
   async function fetchRooms() {
-    const { data, error } = await supabase.from("rooms").select("*");
+    const { data, error } = await supabase.from("Rooms").select("*");
     if (error) console.error(error);
     else setRooms(data);
   }

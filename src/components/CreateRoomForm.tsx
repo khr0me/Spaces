@@ -3,9 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 import { useAccount } from "wagmi";
 
 const supabase = createClient(
-  "https://bwlwdaajalymovfjpavs.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3bHdkYWFqYWx5bW92ZmpwYXZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM0OTE1OTYsImV4cCI6MjA1OTA2NzU5Nn0.JbVvC30kvXUrmXtndQxKfWjm1lh6d8ypBJsM6yeZOMs"
+  import.meta.env.VITE_SUPABASE_URL!,
+  import.meta.env.VITE_SUPABASE_ANON_KEY!
 );
+
+console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+console.log("Anon Key:", import.meta.env.VITE_SUPABASE_ANON_KEY?.slice(0, 10));
 
 export default function CreateRoomForm({
   onRoomCreated,
@@ -20,7 +23,13 @@ export default function CreateRoomForm({
     e.preventDefault();
     if (!roomName || !address) return;
 
-    const { data, error } = await supabase.from("rooms").insert([
+    console.log("Creating room with:", {
+      name: roomName,
+      is_public: isPublic,
+      created_by: address,
+    });
+
+    const { data, error } = await supabase.from("Rooms").insert([
       {
         name: roomName,
         is_public: isPublic,
@@ -55,6 +64,11 @@ export default function CreateRoomForm({
         />
         <span>Public room</span>
       </label>
+      {!address && (
+        <div className="text-red-600">
+          ⚠️ Please connect your wallet before creating a room.
+        </div>
+      )}
 
       <button
         type="submit"
