@@ -2,10 +2,11 @@ import { sdk } from "@farcaster/frame-sdk";
 import { useEffect, useState } from "react";
 import { useAccount, useConnect, useSignMessage } from "wagmi";
 import { createClient } from "@supabase/supabase-js";
+import CreateRoomForm from "./components/CreateRoomForm";
 
 const supabase = createClient(
   "https://bwlwdaajalymovfjpavs.supabase.co",
-  "process.env.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3bHdkYWFqYWx5bW92ZmpwYXZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM0OTE1OTYsImV4cCI6MjA1OTA2NzU5Nn0.JbVvC30kvXUrmXtndQxKfWjm1lh6d8ypBJsM6yeZOMs"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3bHdkYWFqYWx5bW92ZmpwYXZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM0OTE1OTYsImV4cCI6MjA1OTA2NzU5Nn0.JbVvC30kvXUrmXtndQxKfWjm1lh6d8ypBJsM6yeZOMs"
 );
 
 function App() {
@@ -13,11 +14,14 @@ function App() {
     sdk.actions.ready();
   }, []);
 
+  const [refreshFlag, setRefreshFlag] = useState(false);
+
   return (
     <div className="p-4 max-w-md mx-auto">
       <h1 className="text-xl font-bold mb-2">Spaces</h1>
       <ConnectMenu />
-      <RoomList />
+      <CreateRoomForm onRoomCreated={() => setRefreshFlag(!refreshFlag)} />
+      <RoomList refreshFlag={refreshFlag} />
     </div>
   );
 }
@@ -71,7 +75,7 @@ function SignButton() {
   );
 }
 
-function RoomList() {
+function RoomList({ refreshFlag }: { refreshFlag: boolean }) {
   const [rooms, setRooms] = useState<{ id: number; name: string }[]>([]);
 
   async function fetchRooms() {
@@ -79,6 +83,10 @@ function RoomList() {
     if (error) console.error(error);
     else setRooms(data);
   }
+
+  useEffect(() => {
+    fetchRooms();
+  }, [refreshFlag]);
 
   return (
     <div>
